@@ -1,0 +1,12 @@
+pandas
+numpy
+scipy
+xarray
+netCDF4
+plotly
+pydeck
+streamlit
+scikit-learn
+pyarrow
+streamlit>=1.32
+altair==4.2.2
