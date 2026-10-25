@@ -1,6 +1,6 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ChevronDown, Coins } from "lucide-react";
-import { api, fmtDate, netName, usd } from "../api";
+import { api, fmtDate, netName, shortHash, usd } from "../api";
 import { useStore } from "../store";
 import { describeTx } from "../txinfo";
 
@@ -29,8 +29,10 @@ export default function Records() {
       <div className="head">
         <div className="kicker">Records</div>
         <h1>What the blockchain has recorded</h1>
-        <p>Registrations, losses, daily reward lists and payouts are written to a shared record that fishing companies, sponsors and crews can all check, and that nobody can quietly edit. This demo uses a local test blockchain and play money.</p>
+        <p>Registrations, losses, daily reward lists and payouts are written to a shared record that fishing companies, sponsors and crews can all check, and that nobody can quietly edit. This demo runs on a private test blockchain with play money; the same contracts also run on the public Base Sepolia testnet, below.</p>
       </div>
+
+      <PublicTestnet />
 
       <div className="card">
         <div className="row"><h3 className="grow">Money held by the smart contract</h3><span className="num">{usd(p.balance)}</span></div>
@@ -77,6 +79,25 @@ export default function Records() {
 
       <h3 style={{ margin: "26px 0 10px" }}>Rules the contract enforces on its own</h3>
       <div className="rules">{RULES.map(([t, s]) => <div key={t}><b>{t}</b><span>{s}</span></div>)}</div>
+    </div>
+  );
+}
+
+type TestnetRun = { explorer: string; escrow: string; usd: string; steps: { label: string; tx: string; url: string }[] };
+
+/** The same contracts on the public Base Sepolia testnet: anyone can inspect these transactions and read the verified code. */
+function PublicTestnet() {
+  const [t, setT] = useState<TestnetRun | null>(null);
+  useEffect(() => { fetch("/testnet.json").then((r) => (r.ok ? r.json() : null)).then(setT).catch(() => setT(null)); }, []);
+  if (!t) return null;
+  return (
+    <div className="card">
+      <div className="row"><h3 className="grow">Live on the public testnet (Base Sepolia)</h3>
+        <a className="tiny" href={`${t.explorer}/address/${t.escrow}`} target="_blank" rel="noreferrer">GearEscrow {shortHash(t.escrow)} ↗</a></div>
+      <p className="tiny muted" style={{ marginTop: 4 }}>The full story, run once on a public blockchain that anyone can inspect: passports, deposits, sponsor money, a sealed daily price list (Merkle root), a claim with its proof, the automatic payout, and a fraud attempt rejected with the money returned. Source code verified on <a href={`https://repo.sourcify.dev/84532/${t.escrow}`} target="_blank" rel="noreferrer">Sourcify</a>.</p>
+      <ol style={{ margin: "10px 0 0", paddingLeft: 20 }}>
+        {t.steps.map((s) => <li key={s.tx} style={{ margin: "4px 0" }}><a href={s.url} target="_blank" rel="noreferrer">{s.label}</a> <span className="tiny muted">{shortHash(s.tx)}</span></li>)}
+      </ol>
     </div>
   );
 }

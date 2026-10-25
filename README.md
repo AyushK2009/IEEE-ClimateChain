@@ -3,7 +3,7 @@
 **IEEE ClimateChain Global Hackathon 2026 · Track: Sustainable Supply Chains** (digital product passports, circular-economy incentives)
 
 <!-- LINKS -->
-**Live demo:** coming shortly · **Demo video:** coming shortly · **Public testnet deployment:** coming shortly
+**Live demo (recorded run):** coming shortly · **Demo video:** coming shortly · **Public testnet:** [GearEscrow on Base Sepolia](https://sepolia.basescan.org/address/0x8923a3C10460AE3029c1053D33a97d52De957921) (source verified on [Sourcify](https://repo.sourcify.dev/84532/0x8923a3C10460AE3029c1053D33a97d52De957921))
 <!-- /LINKS -->
 
 Lost fishing nets ("ghost gear") keep catching and killing marine life for years. They stay lost for three practical reasons: nobody knows whose net it is, nobody knows where it has drifted, and nobody is paid to bring it back. This prototype gives every net all three:
@@ -118,15 +118,33 @@ Starting the demo restores the seeded world, so every run produces the same net 
 
 ## Public testnet
 
-The same contracts can be deployed to Base Sepolia and run through one full lifecycle, so anyone can inspect the transactions on a block explorer:
+The same contracts are deployed on **Base Sepolia** (a public Ethereum test network), where anyone can inspect every transaction and read the verified source code:
+
+- **GearEscrow:** [`0x8923a3C10460AE3029c1053D33a97d52De957921`](https://sepolia.basescan.org/address/0x8923a3C10460AE3029c1053D33a97d52De957921) · verified source on [Sourcify](https://repo.sourcify.dev/84532/0x8923a3C10460AE3029c1053D33a97d52De957921)
+- **DemoUSD (play money):** [`0x2a926843a711DCBBC1283d54A97828dbB53b8877`](https://sepolia.basescan.org/address/0x2a926843a711DCBBC1283d54A97828dbB53b8877)
+
+One full lifecycle, run on the public chain:
+
+1. [Checkout: 3 net passports minted ([1, 2, 3])](https://sepolia.basescan.org/tx/0xf3e15b6381e33022bd3593c1669b1ab71101d6893e577898d725f44e89bed9e1)
+2. [Sponsor funds the bounty pool (20,000 dUSD play money)](https://sepolia.basescan.org/tx/0x7c5aca8413c9a0063d99bde3c719b384f5b0b6309f303d5da6a082325c1b036b)
+3. [Nets #1 and #2 reported lost (deposits move to the reward pool)](https://sepolia.basescan.org/tx/0xb776b7076a4974bd327e099a308972ccc8e3d1d473e743c98d4a8551e621d0ca)
+4. [Daily price list sealed as a Merkle root (net #1: 926 dUSD)](https://sepolia.basescan.org/tx/0xe1b8c646ee57638c7f92559923c01023eb1f65ba0d9e20f0692f839a16e7e744)
+5. [Recovery claim submitted (bounty locked)](https://sepolia.basescan.org/tx/0xc948c81366d834983803c029d0675d33a4ab798f5a7d2d72ab6621b9420d0c2f)
+6. [Verifier records outcome: accept (paid automatically)](https://sepolia.basescan.org/tx/0x89a26db52115659b2e8737f72fd18d910695fb3df45eb891ccbd4c20e8e53c74)
+7. [Fraud attempt on net #2: printed tag, no net (bounty locked)](https://sepolia.basescan.org/tx/0xd7aabe55155f275475d38a4250aa176421e1ae701d48aa6525a4a49fd5f73454)
+8. [Verifier records outcome: reject (locked bounty returns to the pool)](https://sepolia.basescan.org/tx/0xf1c50e435c7428a664e7d8ed02e5fb08750f68b05fbe03a374d55e743ca54dbb)
+
+Reproduce it with your own testnet wallet:
 
 ```bash
 .venv/bin/python -m engine.testnet new-wallet   # creates a testnet-only wallet in .env, prints the address to fund
-# request free Base Sepolia test ETH for that address from a faucet, then:
+# request free Base Sepolia test ETH for that address (e.g. the Coinbase Developer Platform faucet), then:
 .venv/bin/python -m engine.testnet run          # deploy + one full lifecycle; explorer links -> runtime/testnet.json
 ```
 
----
+## Hosted demo
+
+The hosted site has no Python server behind it, so it replays a recording of one real run of the full system (made by driving the guided demo against the live backend; `web/public/replay`). Every number, forecast, check and transaction shown there came from that run, and a banner on every page says so. The live system, including new forecasts and the local AI check on your own photos, runs locally with the two commands above.
 
 ## Repository layout
 

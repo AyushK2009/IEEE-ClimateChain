@@ -1,0 +1,50 @@
+{
+ "chainId": 84532,
+ "explorer": "https://sepolia.basescan.org",
+ "escrow": "0x8923a3C10460AE3029c1053D33a97d52De957921",
+ "usd": "0x2a926843a711DCBBC1283d54A97828dbB53b8877",
+ "outcome": "accept",
+ "fraudOutcome": "reject",
+ "steps": [
+  {
+   "label": "Checkout: 3 net passports minted ([1, 2, 3])",
+   "tx": "0xf3e15b6381e33022bd3593c1669b1ab71101d6893e577898d725f44e89bed9e1",
+   "url": "https://sepolia.basescan.org/tx/0xf3e15b6381e33022bd3593c1669b1ab71101d6893e577898d725f44e89bed9e1"
+  },
+  {
+   "label": "Sponsor funds the bounty pool (20,000 dUSD play money)",
+   "tx": "0x7c5aca8413c9a0063d99bde3c719b384f5b0b6309f303d5da6a082325c1b036b",
+   "url": "https://sepolia.basescan.org/tx/0x7c5aca8413c9a0063d99bde3c719b384f5b0b6309f303d5da6a082325c1b036b"
+  },
+  {
+   "label": "Nets #1 and #2 reported lost (deposits move to the reward pool)",
+   "tx": "0xb776b7076a4974bd327e099a308972ccc8e3d1d473e743c98d4a8551e621d0ca",
+   "url": "https://sepolia.basescan.org/tx/0xb776b7076a4974bd327e099a308972ccc8e3d1d473e743c98d4a8551e621d0ca"
+  },
+  {
+   "label": "Daily price list sealed as a Merkle root (net #1: 926 dUSD)",
+   "tx": "0xe1b8c646ee57638c7f92559923c01023eb1f65ba0d9e20f0692f839a16e7e744",
+   "url": "https://sepolia.basescan.org/tx/0xe1b8c646ee57638c7f92559923c01023eb1f65ba0d9e20f0692f839a16e7e744"
+  },
+  {
+   "label": "Recovery claim submitted (bounty locked)",
+   "tx": "0xc948c81366d834983803c029d0675d33a4ab798f5a7d2d72ab6621b9420d0c2f",
+   "url": "https://sepolia.basescan.org/tx/0xc948c81366d834983803c029d0675d33a4ab798f5a7d2d72ab6621b9420d0c2f"
+  },
+  {
+   "label": "Verifier records outcome: accept (paid automatically)",
+   "tx": "0x89a26db52115659b2e8737f72fd18d910695fb3df45eb891ccbd4c20e8e53c74",
+   "url": "https://sepolia.basescan.org/tx/0x89a26db52115659b2e8737f72fd18d910695fb3df45eb891ccbd4c20e8e53c74"
+  },
+  {
+   "label": "Fraud attempt on net #2: printed tag, no net (bounty locked)",
+   "tx": "0xd7aabe55155f275475d38a4250aa176421e1ae701d48aa6525a4a49fd5f73454",
+   "url": "https://sepolia.basescan.org/tx/0xd7aabe55155f275475d38a4250aa176421e1ae701d48aa6525a4a49fd5f73454"
+  },
+  {
+   "label": "Verifier records outcome: reject (locked bounty returns to the pool)",
+   "tx": "0xf1c50e435c7428a664e7d8ed02e5fb08750f68b05fbe03a374d55e743ca54dbb",
+   "url": "https://sepolia.basescan.org/tx/0xf1c50e435c7428a664e7d8ed02e5fb08750f68b05fbe03a374d55e743ca54dbb"
+  }
+ ]
+}

@@ -2,4 +2,7 @@ import { createRoot } from "react-dom/client";
 import App from "./App";
 import "./theme.css";
 
-createRoot(document.getElementById("root")!).render(<App />);
+import { startReplay } from "./replay";
+
+// On the hosted site, API calls are answered from a recorded run; locally this is a no-op.
+startReplay().finally(() => createRoot(document.getElementById("root")!).render(<App />));

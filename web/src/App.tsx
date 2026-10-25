@@ -9,6 +9,10 @@ import Fleet from "./pages/Fleet";
 import Claim from "./pages/Claim";
 import Records from "./pages/Records";
 import Passport from "./pages/Passport";
+import { REPLAY } from "./replay";
+
+const REPO = "https://github.com/AyushK2009/IEEE-ClimateChain";
+const TESTNET = "https://sepolia.basescan.org/address/0x8923a3C10460AE3029c1053D33a97d52De957921";
 
 export const APP_NAME = "Ghost Gear Recovery";
 const LINKS = [["/explore", "Recovery map", MapIcon], ["/claim", "Claim a recovery", Camera], ["/fleet", "My fleet", Ship]] as const;
@@ -42,9 +46,21 @@ function Nav({ path }: { path: string }) {
         <a className={`quiet ${path.startsWith("/records") ? "on" : ""}`} href="#/records"><Link2 size={14} />Records</a>
         {tour.active
           ? <div className="demo-pill">Guided demo · {tour.chapter} <button onClick={tour.start}>Restart</button><button onClick={tour.exit}>Exit</button></div>
-          : <><button className="btn sm" onClick={tour.start}>Start guided demo</button><Clock /></>}
+          : <><button className="btn sm" onClick={tour.start}>Start guided demo</button>{!REPLAY && <Clock />}</>}
       </div>
     </nav>
+  );
+}
+
+/** Hosted site: say plainly what this is, and where the live public chain is. */
+function ReplayBanner() {
+  if (!REPLAY) return null;
+  return (
+    <div className="replay-banner">
+      <b>Recorded demo</b> · a replay of one real run of the system (private test chain, play money).
+      <a href={TESTNET} target="_blank" rel="noreferrer">Same contracts live on the public Base Sepolia testnet ↗</a>
+      <a href={REPO} target="_blank" rel="noreferrer">Run it live (GitHub) ↗</a>
+    </div>
   );
 }
 
@@ -66,7 +82,8 @@ function Shell() {
   else if (path.startsWith("/records") || path.startsWith("/ledger")) page = <Records />;
   else if (path.startsWith("/net/")) page = <Passport id={+path.split("/")[2]} />;
   else page = <Home />;
-  return <><Nav path={path} />{page}<Toast /></>;
+  return <><Nav path={path} />{page}<Toast />
+      <ReplayBanner /></>;
 }
 
 export default function App() {

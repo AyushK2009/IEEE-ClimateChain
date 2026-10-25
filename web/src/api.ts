@@ -1,4 +1,5 @@
 // Client for the Python API. Longitudes from the API are 0-360.
+import { replayUrl } from "./replay";
 export type Actor = { name: string; address: string; balance: number; kind: string };
 export type State = {
   today: number; date: string; dataRange: [string, string]; epoch: number;
@@ -76,8 +77,8 @@ export const api = {
     f.append("lat", String(lat)); f.append("lon", String(lon));
     return fetch("/api/claims", { method: "POST", body: f }).then(j<ClaimResult>);
   },
-  tagUrl: (id: number) => `/api/nets/${id}/tag.png`,
-  stagedUrl: (id: number, variant: string, seed = 0) => `/api/nets/${id}/staged-photo?variant=${variant}&seed=${seed}`,
+  tagUrl: (id: number) => replayUrl(`/api/nets/${id}/tag.png`),
+  stagedUrl: (id: number, variant: string, seed = 0) => replayUrl(`/api/nets/${id}/staged-photo?variant=${variant}&seed=${seed}`),
 };
 
 export const usd = (n: number) => "$" + Math.round(n).toLocaleString("en-US");

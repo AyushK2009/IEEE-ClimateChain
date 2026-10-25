@@ -77,7 +77,7 @@ def run():
     w3 = ch.w3
     funder = ch.addr("admin")
     bal = w3.eth.get_balance(funder) / 1e18
-    if bal < 0.005:
+    if bal < 0.0008:
         sys.exit(f"Funding address {funder} has {bal:.5f} ETH; request Base Sepolia test ETH from a faucet first.")
     log = {"chainId": ch.chain_id, "explorer": EXPLORER, "steps": []}
 
@@ -86,9 +86,9 @@ def run():
         print(f"  {label}: {EXPLORER}/tx/{tx.hash}")
 
     print("Funding actor gas (testnet ETH)...")
-    for k in ("supplier", "sponsor", "kai", "crew_a"):
-        if w3.eth.get_balance(ch.addr(k)) < 5 * 10**14:
-            tx = {"to": ch.addr(k), "value": 10**15, "nonce": w3.eth.get_transaction_count(funder, "pending"),
+    for k in ("supplier", "sponsor", "kai", "crew_a", "crew_b"):     # Base Sepolia fees are ~0.01 gwei: 0.0001 ETH is many transactions
+        if w3.eth.get_balance(ch.addr(k)) < 5 * 10**13:
+            tx = {"to": ch.addr(k), "value": 10**14, "nonce": w3.eth.get_transaction_count(funder, "pending"),
                   "chainId": ch.chain_id, "gas": 21000, "maxFeePerGas": w3.eth.gas_price * 2 + 10**8,
                   "maxPriorityFeePerGas": 10**8}
             h = w3.eth.send_raw_transaction(ch.accounts["admin"].sign_transaction(tx).raw_transaction)
@@ -105,16 +105,17 @@ def run():
     sug = S.FEATURED_SUGGESTION
     from engine import drift as D
     loss_day = D.currents().day_index(S.TODAY)
-    t = ch.report_loss("kai", [net], [keccak(f"{net}|{sug['lat']}|{sug['lon']}|{loss_day}".encode())])
-    step(f"Net #{net} reported lost (deposit forfeited to pool)", t)
-    F.run_group([net], np.array([sug["lat"]]), np.array([sug["lon"]]), loss_day, 500)
+    other = ids[1]                                   # a second lost net: the target of the fraud attempt
+    t = ch.report_loss("kai", [net, other], [keccak(f"{n}|{sug['lat']}|{sug['lon']}|{loss_day}".encode()) for n in (net, other)])
+    step(f"Nets #{net} and #{other} reported lost (deposits move to the reward pool)", t)
+    F.run_group([net, other], np.array([sug["lat"]] * 2), np.array([sug["lon"]] * 2), loss_day, 500)
     claim_day = loss_day + 21
     epoch = ch.current_epoch() + 1
-    b = P.build([{"id": net, "owner": "kai", "loss_day": loss_day, "deposit": C.DEPOSIT}], claim_day,
+    b = P.build([{"id": n, "owner": "kai", "loss_day": loss_day, "deposit": C.DEPOSIT} for n in (net, other)], claim_day,
                 ch.pool()["poolAvailable"], epoch)
     t = ch.publish_epoch(bytes.fromhex(b["root"][2:]), b["total"] * 10**18, f"price-list/epoch-{epoch}.json")
-    step(f"Price list published (net #{net}: {b['entries'][0]['bounty']} dUSD)", t)
-    e = b["entries"][0]
+    e = next(x for x in b["entries"] if x["netId"] == net)
+    step(f"Daily price list sealed as a Merkle root (net #{net}: {e['bounty']} dUSD)", t)
     lat, lon, _ = F.at(net, claim_day)
     i = int(np.argmin((lat - np.median(lat)) ** 2 + (lon - np.median(lon)) ** 2))
     photo = T.to_jpeg(T.staged_photo(T.tag_image(ch.chain_id, esc, net, "Kai Fisheries"), "recovered", 0))
@@ -128,6 +129,18 @@ def run():
     t = ch.resolve_claim(cid, outcome, rh); step(f"Verifier records outcome: {outcome} (paid automatically)", t)
     log["outcome"] = outcome
     log["report"] = report
+    OUT.write_text(json.dumps(log, indent=1, default=str))
+    # fraud attempt: a printed copy of the other net's tag, no net in the photo
+    e2 = next(x for x in b["entries"] if x["netId"] == other)
+    fake = T.to_jpeg(T.staged_photo(T.tag_image(ch.chain_id, esc, other, "Kai Fisheries"), "printout", 1))
+    t, cid2 = ch.submit_claim("crew_b", other, e2["bounty"] * 10**18, epoch, [bytes.fromhex(p[2:]) for p in e2["proof"]], keccak(fake))
+    step(f"Fraud attempt on net #{other}: printed tag, no net (bounty locked)", t)
+    ai2 = V.check(fake)
+    outcome2, report2, rh2 = VF.run({"id": other, "loss_day": loss_day, "loss_lat": sug["lat"], "loss_lon": sug["lon"], "chainStatus": "Lost"},
+                                    {"claimant": "crew_b", "day": claim_day, "lat": float(lat[i]), "lon": float(lon[i]),
+                                     "tag": T.decode(fake), "photo_hash": "0x" + keccak(fake).hex()}, ai2)
+    t = ch.resolve_claim(cid2, outcome2, rh2); step(f"Verifier records outcome: {outcome2} (locked bounty returns to the pool)", t)
+    log["fraudOutcome"] = outcome2
     OUT.write_text(json.dumps(log, indent=1, default=str))
     print(f"Done. Summary with explorer links: {OUT.relative_to(C.ROOT)}")
 
