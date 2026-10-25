@@ -3,7 +3,7 @@
 **IEEE ClimateChain Global Hackathon 2026 · Track: Sustainable Supply Chains** (digital product passports, circular-economy incentives)
 
 <!-- LINKS -->
-**Live demo (recorded run):** coming shortly · **Demo video:** coming shortly · **Public testnet:** [GearEscrow on Base Sepolia](https://sepolia.basescan.org/address/0x8923a3C10460AE3029c1053D33a97d52De957921) (source verified on [Sourcify](https://repo.sourcify.dev/84532/0x8923a3C10460AE3029c1053D33a97d52De957921))
+**Live demo (recorded run):** [ieee-climate-chain-kappa.vercel.app](https://ieee-climate-chain-kappa.vercel.app/) · **Demo video:** [youtu.be/JeM9RBxg_s4](https://youtu.be/JeM9RBxg_s4) · **Public testnet:** [GearEscrow on Base Sepolia](https://sepolia.basescan.org/address/0x8923a3C10460AE3029c1053D33a97d52De957921) (source verified on [Sourcify](https://repo.sourcify.dev/84532/0x8923a3C10460AE3029c1053D33a97d52De957921))
 <!-- /LINKS -->
 
 Lost fishing nets ("ghost gear") keep catching and killing marine life for years. They stay lost for three practical reasons: nobody knows whose net it is, nobody knows where it has drifted, and nobody is paid to bring it back. This prototype gives every net all three:
